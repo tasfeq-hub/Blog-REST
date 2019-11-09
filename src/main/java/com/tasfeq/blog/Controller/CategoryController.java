@@ -27,6 +27,7 @@ public class CategoryController {
 	 @PostMapping(path="/categories", consumes="application/json", produces="application/json")
 	 public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category) {
 		 Category newCategory = categoryDAO.save(category);
+		 
 		 if(newCategory.equals(category)) {
 			 return ResponseEntity.status(HttpStatus.CREATED).body(category);
 		 }else {
