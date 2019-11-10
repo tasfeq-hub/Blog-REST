@@ -30,7 +30,7 @@ public class Blog {
 	private String title;
 	
 	@NotNull
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER) // LAZY creates problem
 	@JoinColumn(name = "category_id", referencedColumnName = "id")
 	private Category category_id;
 	

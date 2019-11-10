@@ -2,6 +2,7 @@ package com.tasfeq.blog.dao;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -24,11 +25,15 @@ class BlogDAOTest {
 	
 	@Test
 	void testSave() {
-		Long id = 2L;
+		Long id = 1L;
 		Optional<Category> category = categoryDAO.getCategoryById(id);
 		if(category.isPresent()) {
-			Blog blog = new Blog("Good Music",category.get(),"test.png",new Date(),PublicationType.unpublished);
-			blogDAO.save(blog);
+			Blog blog = new Blog("Good Music another",category.get(),"test.png",new Date(),PublicationType.unpublished);
+			Blog result = blogDAO.save(blog);
+			
+			assertNotNull(result);
+		}else {
+			fail("Not Saved Successfully");	
 		}
 	}
 
@@ -42,10 +47,10 @@ class BlogDAOTest {
 
 	@Test
 	void testGetAllBlogs() {
-		List<Blog> blogList = new ArrayList<Blog>();
+		Iterable<Blog> blogList = new ArrayList<Blog>();
 		blogList = blogDAO.getAllBlogs();
 		
-		assertFalse(blogList.isEmpty());
+		assertTrue(((Collection<?>) blogList).size() != 0);
 	}
 
 	@Test

@@ -6,6 +6,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,18 +14,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.tasfeq.blog.dao.BlogDAO;
 import com.tasfeq.blog.dao.CategoryDAO;
+import com.tasfeq.blog.domain.Blog;
 import com.tasfeq.blog.domain.Category;
 
+
+@CrossOrigin
 @RestController
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1/categories/")
 public class CategoryController {
 
 	 @Autowired
 	 private CategoryDAO categoryDAO;
+	 
+	 @Autowired
+	 private BlogDAO blogDAO;
 	
-	 @PostMapping(path="/categories", consumes="application/json", produces="application/json")
+	 @PostMapping(path="/", consumes="application/json", produces="application/json")
 	 public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category) {
 		 Category newCategory = categoryDAO.save(category);
 		 
@@ -35,13 +44,13 @@ public class CategoryController {
 		 }
 	 }
 	 
-	 @GetMapping(path="/categories", produces="application/json")
+	 @GetMapping(path="/", produces="application/json")
 	 public ResponseEntity<List<Category>> getAllCategories(){
 		 List<Category> categoryList = categoryDAO.getAllCategories();
 		 return ResponseEntity.ok().body(categoryList);
 	 }
 	 
-	 @GetMapping(path="/categories/{id}", produces="application/json")
+	 @GetMapping(path="/{id}", produces="application/json")
 	 public ResponseEntity<Optional<Category>> getCategoryById(@PathVariable(name="id") Long id){
 		 Optional<Category> category = categoryDAO.getCategoryById(id);
 		
@@ -52,7 +61,7 @@ public class CategoryController {
 		 }
 	 }
 	 
-	 @PutMapping(path="/categories/{id}", consumes="application/json", produces="application/json")
+	 @PutMapping(path="/{id}", consumes="application/json", produces="application/json")
 	 public ResponseEntity<Category> updateCategory(@PathVariable(name="id") Long id, @Valid @RequestBody Category category){
 		 Optional<Category> existingCategory = categoryDAO.getCategoryById(id);
 		 category.setId(existingCategory.get().getId());
@@ -60,7 +69,7 @@ public class CategoryController {
 		 return ResponseEntity.status(HttpStatus.OK).body(category);
 	 }
 	 
-	 @DeleteMapping(path="/categories/{id}")
+	 @DeleteMapping(path="/{id}")
 	 public ResponseEntity<Category> deleteCategory(@PathVariable(name="id") Long id){
 		 try {
 			 Long categoryId = categoryDAO.delete(id);
@@ -71,4 +80,9 @@ public class CategoryController {
 		 }
 	 }
 	 
+	 @GetMapping(path="/blogs")
+	 public ResponseEntity<List<Blog>> getAllBlogsbyCategoryId(@RequestParam(value="categoryId", required=false) Long id){
+		 List<Blog> blogLists = blogDAO.getAllBlogsByCategoryId(id);
+		 return ResponseEntity.ok().body(blogLists);
+	 }
 }
