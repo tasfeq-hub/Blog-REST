@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -60,10 +63,17 @@ public class BlogController {
 	
 	@ApiOperation(value = "Get Specific Blog Post")
 	@GetMapping(path="/{id}")
-	public ResponseEntity<Optional<Blog>> getBlogById (@PathVariable(name="id") Long id) {
+	public ResponseEntity<Resource<Optional<Blog>>> getBlogById (@PathVariable(name="id") Long id) {
 		Optional<Blog> blog = blogDAO.getBlogById(id);
+		
+		Resource<Optional<Blog>> blogResource = new Resource<Optional<Blog>>(blog);
+		
+		ControllerLinkBuilder linkTo = linkTo(methodOn(this.getClass()).getAllBlogs());
+		
+		blogResource.add(linkTo.withRel("all-blogs"));
+		
 		if(blog.isPresent()) {
-			return ResponseEntity.ok().body(blog);
+			return ResponseEntity.ok(blogResource);
 		}else {
 			return ResponseEntity.notFound().build();
 		}
